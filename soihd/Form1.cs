@@ -1260,7 +1260,7 @@ namespace soihd
             finally
             {
                 if (sqlReader != null)
-                    sqlReader.Close();
+                    sqlReader.Close();/*test*/
             }
         }
     }
