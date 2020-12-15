@@ -21,7 +21,7 @@ namespace soihd
             string connectionString = "Database=soihd;Data Source=localhost;User Id=root;Password=1111";
             sqlCon = new MySqlConnection(connectionString);
             sqlCon.Open();
-            label1.Visible = false;
+            
 
         }
 
@@ -55,17 +55,12 @@ namespace soihd
 
 
 
-
         private async void button1_Click(object sender, EventArgs e)
         {
+            dataGridView1.Rows.Clear();
+            MySqlDataReader sqlReader = null;
             try
-            {
-                if (label1.Visible)
-                    label1.Visible = false;
-                dataGridView1.Rows.Clear();
-
-                MySqlDataReader sqlReader = null;
-
+            { 
                 string model = maskedTextBox1.Text;
                 if (!string.IsNullOrEmpty(model) && !string.IsNullOrWhiteSpace(model))
                 {
@@ -91,12 +86,16 @@ namespace soihd
                 {
                     MessageBox.Show(Convert.ToString("Введите название"), Convert.ToString("FindError"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                if (sqlReader != null)
-                    sqlReader.Close();
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (sqlReader != null)
+                    sqlReader.Close();
             }
 
 
@@ -105,186 +104,158 @@ namespace soihd
 
         private async void button3_Click(object sender, EventArgs e)
         {
-            dataGridView1.Rows.Clear();
-
-
-            if (checkBox1.Checked)
+            try
             {
-                MySqlDataReader sqlReader = null;
+                dataGridView1.Rows.Clear();
                 string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.price_phone>0 AND phone_warehouse.price_phone<10000 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
+                        "phone_warehouse.price_phone 'Цена'" +
+                        ",phone_warehouse.qty_phone 'Количество' " +
+                        " FROM phone_brands INNER JOIN phone_warehouse ON " +
+                        "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone ";
 
+                if (checkBox1.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+
+                    string tmp = sql + "WHERE phone_warehouse.price_phone>0 AND phone_warehouse.price_phone<10000 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
                 }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-            if (checkBox2.Checked)
+                if (checkBox2.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+                    string tmp = sql + "WHERE phone_warehouse.price_phone>=10000 AND phone_warehouse.price_phone<40000 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+                if (checkBox3.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+                    String tmp = sql + "WHERE phone_warehouse.price_phone>=40000 AND phone_warehouse.price_phone<65000 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+                if (checkBox4.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+                    string tmp = sql + " WHERE phone_warehouse.price_phone>=65000  ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+            }catch(Exception ex)
             {
-                MySqlDataReader sqlReader = null;
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.price_phone>=10000 AND phone_warehouse.price_phone<40000 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            if (checkBox3.Checked)
-            {
-                MySqlDataReader sqlReader = null;
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.price_phone>=40000 AND phone_warehouse.price_phone<65000 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-            if (checkBox4.Checked)
-            {
-                MySqlDataReader sqlReader = null;
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.price_phone>=65000  ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-
-
-
         }
 
         private async void button4_Click(object sender, EventArgs e)
         {
-
-            dataGridView1.Rows.Clear();
-            if (radioButton1.Checked)
+            try
             {
-
-                MySqlDataReader sqlReader = null;
-
+                dataGridView1.Rows.Clear();
                 string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.ID_brand_phone=2 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
+                        "phone_warehouse.price_phone 'Цена'" +
+                        ",phone_warehouse.qty_phone 'Количество' " +
+                        " FROM phone_brands INNER JOIN phone_warehouse ON " +
+                        "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone ";
+                if (radioButton1.Checked)
                 {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
+                    MySqlDataReader sqlReader = null;
+                    string tmp=sql+" WHERE phone_warehouse.ID_brand_phone=2 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
                 }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-            else if (radioButton2.Checked)
+                else if (radioButton2.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+                    string tmp=sql+"WHERE phone_warehouse.ID_brand_phone=3 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+                else if (radioButton3.Checked)
+                {
+
+                    MySqlDataReader sqlReader = null;
+
+                    string tmp = sql +"WHERE phone_warehouse.ID_brand_phone=4 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+                else if (radioButton4.Checked)
+                {
+                    MySqlDataReader sqlReader = null;
+
+                    string tmp = sql +"WHERE phone_warehouse.ID_brand_phone=1 ORDER BY phone_warehouse.price_phone;";
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
+                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await sqlReader.ReadAsync())
+                    {
+                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
+                        dataGridView1.Rows.Add(rows);
+                    }
+                    if (sqlReader != null)
+                        sqlReader.Close();
+                }
+            }catch(Exception ex)
             {
-                MySqlDataReader sqlReader = null;
-
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.ID_brand_phone=3 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-            else if (radioButton3.Checked)
-            {
-
-                MySqlDataReader sqlReader = null;
-
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.ID_brand_phone=4 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
-            }
-            else if (radioButton4.Checked)
-            {
-                MySqlDataReader sqlReader = null;
-
-                string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
-                    "phone_warehouse.price_phone 'Цена'" +
-                    ",phone_warehouse.qty_phone 'Количество' " +
-                    " FROM phone_brands INNER JOIN phone_warehouse ON " +
-                    "phone_brands.ID_brand_phone = phone_warehouse.ID_brand_phone " +
-                    "WHERE phone_warehouse.ID_brand_phone=1 ORDER BY phone_warehouse.price_phone;";
-                MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await sqlReader.ReadAsync())
-                {
-                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]), Convert.ToString(sqlReader[3]) };
-                    dataGridView1.Rows.Add(rows);
-
-                }
-                if (sqlReader != null)
-                    sqlReader.Close();
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+     
         private async void button5_Click(object sender, EventArgs e)
         {
             try
@@ -372,7 +343,7 @@ namespace soihd
                     MySqlCommand command = new MySqlCommand(sql, sqlCon);
 
                     await command.ExecuteNonQueryAsync();
-                    MessageBox.Show(Convert.ToString("Запись успешно изменена"), Convert.ToString("InsertSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(Convert.ToString("Запись успешно изменена"), Convert.ToString("UpdateSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -465,8 +436,6 @@ namespace soihd
             dataGridView3.Rows.Clear();
             try
             {
-
-
                 if (!string.IsNullOrEmpty(maskedTextBox9.Text) && !string.IsNullOrWhiteSpace(maskedTextBox9.Text))
                 {
 
@@ -504,7 +473,6 @@ namespace soihd
             dataGridView3.Rows.Clear();
             try
             {
-
 
                 if (checkBox5.Checked)
                 {
@@ -617,7 +585,7 @@ namespace soihd
                     MySqlCommand command = new MySqlCommand(sql, sqlCon);
 
                     await command.ExecuteNonQueryAsync();
-                    MessageBox.Show(Convert.ToString("Запись успешно изменена"), Convert.ToString("InsertSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(Convert.ToString("Запись успешно изменена"), Convert.ToString("UpdateSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -679,7 +647,7 @@ namespace soihd
                 }
                 else
                 {
-                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("DeleteError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
@@ -957,7 +925,6 @@ namespace soihd
         }
 
 
-
         private async void button21_Click(object sender, EventArgs e)
         {
             try
@@ -996,11 +963,11 @@ namespace soihd
                         ",price_phone=" + Convert.ToString(maskedTextBox37.Text) + " WHERE Serial_number_phone=" + Convert.ToString(maskedTextBox42.Text) + ";";
                     MySqlCommand command = new MySqlCommand(sql, sqlCon);
                     await command.ExecuteNonQueryAsync();
-                    MessageBox.Show(Convert.ToString("Запись Изменена"), Convert.ToString("Delete"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(Convert.ToString("Запись Изменена"), Convert.ToString("Update"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("DeleteError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
@@ -1015,64 +982,46 @@ namespace soihd
             MySqlDataReader sqlReader = null;
             try
             {
-                
+                string sql = "SELECT workshop_number,qty_work_shift," +
+                         "build_date, Serial_number_phone,Serial_number," +
+                        "employees.name_employee,employees.surname_employee " +
+
+                    " FROM workshop INNER JOIN employees ON " +
+                    "employees.number_employee=workshop.number_employee ";
 
                 string ceh = maskedTextBox41.Text;
                 if (!string.IsNullOrEmpty(ceh) && !string.IsNullOrWhiteSpace(ceh))
                 {
                     checkBox16.Checked = false;
-                    string sql = "SELECT workshop_number,qty_work_shift," +
-                         "build_date, Serial_number_phone,Serial_number," +
-                        "employees.name_employee,employees.surname_employee " +
-                       
-                    " FROM workshop INNER JOIN employees ON " +
-                    "employees.number_employee=workshop.number_employee " +
-                    "WHERE workshop_number=" + ceh + " ORDER BY workshop.Serial_number_phone;";
+                    
+                    sql=sql+"WHERE workshop_number=" + ceh + " ORDER BY workshop.Serial_number_phone;";
 
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-
-
-                    while (await sqlReader.ReadAsync())
-                    {
-                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
-                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,Convert.ToString(sqlReader[6])  };
-                        dataGridView5.Rows.Add(rows);
-
-                    }
-                    if (sqlReader != null)
-                        sqlReader.Close();
                 }
                 else if(checkBox16.Checked)
                 {
                     checkBox17.Checked = false;
                     checkBox18.Checked = false;
                     checkBox19.Checked = false;
-                    string sql = "SELECT workshop_number,qty_work_shift," +
-                         "build_date, Serial_number_phone,Serial_number," +
-                        "employees.name_employee,employees.surname_employee " +
-
-                    " FROM workshop INNER JOIN employees ON " +
-                    "employees.number_employee=workshop.number_employee; ";
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-
-
-                    while (await sqlReader.ReadAsync())
-                    {
-                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
-                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,Convert.ToString(sqlReader[6])  };
-                        dataGridView5.Rows.Add(rows);
-
-                    }
-                    if (sqlReader != null)
-                        sqlReader.Close();
+                    sql = sql + " ORDER BY workshop.Serial_number_phone;";
+                  
                 }
                 else
                 {
                     MessageBox.Show(Convert.ToString("Введите название"), Convert.ToString("FindError"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                
+                MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+
+
+                while (await sqlReader.ReadAsync())
+                {
+                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
+                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,Convert.ToString(sqlReader[6])  };
+                    dataGridView5.Rows.Add(rows);
+
+                }
+                if (sqlReader != null)
+                    sqlReader.Close();
             }
             catch (Exception ex)
             {
@@ -1091,20 +1040,17 @@ namespace soihd
             MySqlDataReader sqlReader = null;
             try
             {
-
-
+                string sql = "SELECT workshop_number,qty_work_shift," +
+                         "build_date, Serial_number_phone,Serial_number," +
+                        "employees.name_employee,employees.surname_employee " +
+                    " FROM workshop INNER JOIN employees ON " +
+                    "employees.number_employee=workshop.number_employee ";
                 if (checkBox17.Checked)
                 {
                     checkBox16.Checked = false;
-                    string sql = "SELECT workshop_number,qty_work_shift," +
-                         "build_date, Serial_number_phone,Serial_number," +
-                        "employees.name_employee,employees.surname_employee " +
+                    string tmp=sql+"WHERE qty_work_shift>=0  AND  qty_work_shift<20 ORDER BY workshop.qty_work_shift;";
 
-                    " FROM workshop INNER JOIN employees ON " +
-                    "employees.number_employee=workshop.number_employee " +
-                    "WHERE qty_work_shift>=0  AND  qty_work_shift<20 ORDER BY workshop.qty_work_shift;";
-
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
                     sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
 
 
@@ -1121,15 +1067,9 @@ namespace soihd
                 if (checkBox18.Checked)
                 {
                     checkBox16.Checked = false;
-                    string sql = "SELECT workshop_number,qty_work_shift," +
-                         "build_date, Serial_number_phone,Serial_number," +
-                        "employees.name_employee,employees.surname_employee " +
+                  string tmp =sql+"WHERE qty_work_shift>=20  AND qty_work_shift<100 ORDER BY workshop.qty_work_shift;";
 
-                    " FROM workshop INNER JOIN employees ON " +
-                    "employees.number_employee=workshop.number_employee " +
-                    "WHERE qty_work_shift>=20  AND qty_work_shift<100 ORDER BY workshop.qty_work_shift;";
-
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
                     sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
 
 
@@ -1146,15 +1086,9 @@ namespace soihd
                 if (checkBox19.Checked)
                 {
                     checkBox16.Checked = false;
-                    string sql = "SELECT workshop_number,qty_work_shift," +
-                         "build_date, Serial_number_phone,Serial_number," +
-                        "employees.name_employee,employees.surname_employee " +
+                    string tmp = sql+"WHERE qty_work_shift>=100 ORDER BY workshop.qty_work_shift;";
 
-                    " FROM workshop INNER JOIN employees ON " +
-                    "employees.number_employee=workshop.number_employee " +
-                    "WHERE qty_work_shift>=100 ORDER BY workshop.qty_work_shift;";
-
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    MySqlCommand command = new MySqlCommand(tmp, sqlCon);
                     sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
 
 
@@ -1189,68 +1123,95 @@ namespace soihd
             MySqlDataReader sqlReader = null;
             try
             {
-
-
-                string comp = maskedTextBox51.Text;
-                if (!string.IsNullOrEmpty(comp) && !string.IsNullOrWhiteSpace(comp))
-                {
-                    checkBox20.Checked = false;
-                    string sql = "SELECT Order_number,purchaser," +
-                         "date_sale, price_order,qty_purchased_product," +
-                         "phone_brands.name_brand,phone_warehouse.name_model,"+
-                        "employees.name_employee,employees.surname_employee " +
-
-                    " FROM sales_departament INNER JOIN employees ON " +
-                    "employees.number_employee=sales_departament.number_employee " +
-                    "INNER JOIN phone_brands ON phone_brands.ID_brand_phone=sales_departament.ID_brand_phone "+
-                    "INNER JOIN phone_warehouse ON phone_warehouse.Serial_number_phone=sales_departament.Serial_number_phone "+
-                    "WHERE sales_departament.purchaser='" + comp + "' ORDER BY sales_departament.price_order;";
-
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-
-
-                    while (await sqlReader.ReadAsync())
-                    {
-                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
-                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,
-                            Convert.ToString(sqlReader[6]),Convert.ToString(sqlReader[7]),Convert.ToString(sqlReader[8])  };
-                        dataGridView6.Rows.Add(rows);
-
-                    }
-                    if (sqlReader != null)
-                        sqlReader.Close();
-                }
-                else if (checkBox20.Checked)
-                {
-                    string sql = "SELECT Order_number,purchaser," +
+                string sql = "SELECT Order_number,purchaser," +
                          "date_sale, price_order,qty_purchased_product," +
                          "phone_brands.name_brand,phone_warehouse.name_model," +
                         "employees.name_employee,employees.surname_employee " +
                     " FROM sales_departament INNER JOIN employees ON " +
                     "employees.number_employee=sales_departament.number_employee " +
                     "INNER JOIN phone_brands ON phone_brands.ID_brand_phone=sales_departament.ID_brand_phone " +
-                    "INNER JOIN phone_warehouse ON phone_warehouse.Serial_number_phone=sales_departament.Serial_number_phone " +
-                    " ORDER BY sales_departament.price_order;";
-                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
-                    sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-
-
-                    while (await sqlReader.ReadAsync())
-                    {
-                        string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
-                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,
-                            Convert.ToString(sqlReader[6]),Convert.ToString(sqlReader[7]),Convert.ToString(sqlReader[8])  };
-                        dataGridView6.Rows.Add(rows);
-
-                    }
-                    if (sqlReader != null)
-                        sqlReader.Close();
+                    "INNER JOIN phone_warehouse ON phone_warehouse.Serial_number_phone=sales_departament.Serial_number_phone ";
+                string comp = maskedTextBox51.Text;
+                if (!string.IsNullOrEmpty(comp) && !string.IsNullOrWhiteSpace(comp))
+                {
+                    checkBox20.Checked = false;    
+                    sql =sql+"WHERE sales_departament.purchaser='" + comp + "' ORDER BY sales_departament.purchaser;";
+   
+                }
+                else if (checkBox20.Checked)
+                {
+                     sql = sql+" ORDER BY sales_departament.purchaser;";
+                   
                 }
                 else
                 {
                     MessageBox.Show(Convert.ToString("Введите название"), Convert.ToString("FindError"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+                MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                while (await sqlReader.ReadAsync())
+                {
+                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
+                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,
+                            Convert.ToString(sqlReader[6]),Convert.ToString(sqlReader[7]),Convert.ToString(sqlReader[8])  };
+                    dataGridView6.Rows.Add(rows);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (sqlReader != null)
+                    sqlReader.Close();
+            }
+        }
+
+        private async void button25_Click(object sender, EventArgs e)
+        {
+            dataGridView6.Rows.Clear();
+            MySqlDataReader sqlReader = null;
+            try
+            {
+                checkBox20.Checked = false;
+                string sql = "SELECT Order_number,purchaser," +
+                     "date_sale, price_order,qty_purchased_product," +
+                     "phone_brands.name_brand,phone_warehouse.name_model," +
+                    "employees.name_employee,employees.surname_employee " +
+                " FROM sales_departament INNER JOIN employees ON " +
+                "employees.number_employee=sales_departament.number_employee " +
+                "INNER JOIN phone_brands ON phone_brands.ID_brand_phone=sales_departament.ID_brand_phone " +
+                "INNER JOIN phone_warehouse ON phone_warehouse.Serial_number_phone=sales_departament.Serial_number_phone WHERE ";
+                if (radioButton5.Checked)
+                {
+                    sql = sql + "price_order>=0 AND price_order<200000 ORDER BY price_order;";
+                }
+                else if(radioButton6.Checked)
+                {
+                    sql = sql + "price_order>=200000 AND price_order<500000 ORDER BY price_order;";
+                }
+                else if(radioButton7.Checked)
+                {
+                    sql = sql + "price_order>=500000 AND price_order<2000000 ORDER BY price_order;";
+                }
+                else if (radioButton8.Checked)
+                {
+                    sql = sql + "price_order>=2000000  ORDER BY price_order;";
+                }
+                MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                sqlReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                while (await sqlReader.ReadAsync())
+                {
+                    string[] rows = { Convert.ToString(sqlReader[0]), Convert.ToString(sqlReader[1]), Convert.ToString(sqlReader[2]),
+                            Convert.ToString(sqlReader[3]),Convert.ToString(sqlReader[4]) ,Convert.ToString(sqlReader[5]) ,
+                            Convert.ToString(sqlReader[6]),Convert.ToString(sqlReader[7]),Convert.ToString(sqlReader[8])  };
+                    dataGridView6.Rows.Add(rows);
+
+                }
+                if (sqlReader != null)
+                    sqlReader.Close();
 
             }
             catch (Exception ex)
@@ -1260,7 +1221,119 @@ namespace soihd
             finally
             {
                 if (sqlReader != null)
-                    sqlReader.Close();/*test*/
+                    sqlReader.Close();
+            }
+        }
+
+        private async void button26_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(!string.IsNullOrEmpty(maskedTextBox52.Text)&&
+                    !string.IsNullOrEmpty(maskedTextBox53.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox54.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox55.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox56.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox57.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox58.Text))
+                {
+                    string[] id = select_phone(maskedTextBox57.Text,maskedTextBox58.Text);
+                  
+                    string sql = "INSERT sales_departament (Order_number,purchaser,date_sale,price_order,qty_purchased_product,ID_brand_phone,Serial_number_phone,Serial_number,number_employee) " +
+                        "VALUES (" + Convert.ToString(maskedTextBox52.Text) + ",'" + Convert.ToString(maskedTextBox53.Text) + "','" +
+                        Convert.ToString(maskedTextBox54.Text) + "'," + Convert.ToString(maskedTextBox55.Text) + "," +
+                        Convert.ToString(maskedTextBox56.Text) + "," +id[2] + ","+id[0]+","+id[1]+","+id[3]+");";
+                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    await command.ExecuteNonQueryAsync();
+                    MessageBox.Show(Convert.ToString("Запись успешно добавлена"), Convert.ToString("InsertSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private string[] select_phone(string brand_phone,string model_phone)
+        {
+            MySqlDataReader sqlReader = null;
+           
+                string sql = "SELECT Serial_number_phone,Serial_number,ID_brand_phone,number_employee from phone_warehouse where ID_brand_phone=" +
+                    select_id_brand(Convert.ToString(brand_phone)) +
+                    " AND name_model='" + model_phone + "';";
+                MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                sqlReader = (MySqlDataReader)command.ExecuteReader();
+
+                sqlReader.Read();
+                
+                   string [] name = { Convert.ToString(sqlReader[0]),Convert.ToString(sqlReader[1]),Convert.ToString(sqlReader[2]),Convert.ToString(sqlReader[3])};
+          
+                if (sqlReader != null)
+                    sqlReader.Close();
+            
+
+            return name;
+        }
+
+        private async void button27_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (!string.IsNullOrEmpty(maskedTextBox59.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox60.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox61.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox62.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox63.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox64.Text) &&
+                    !string.IsNullOrEmpty(maskedTextBox65.Text))
+                {
+                    string[] id = select_phone(maskedTextBox60.Text, maskedTextBox59.Text);
+                    string sql="UPDATE sales_departament SET Serial_number_phone="+id[0]+
+                        ",ID_brand_phone="+id[2]+",purchaser='"+maskedTextBox64.Text+
+                        "',date_sale='"+maskedTextBox63.Text+"',price_order="+ maskedTextBox62.Text+
+                        ",qty_purchased_product="+ maskedTextBox61.Text+ ",Serial_number="+id[1]+
+                        ",number_employee="+id[3]+
+                        " WHERE Order_number="+ maskedTextBox65.Text+ " ;";
+                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    await command.ExecuteNonQueryAsync();
+                    MessageBox.Show(Convert.ToString("Запись успешно изменена"), Convert.ToString("UpdateSuccsess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+             catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        
+        }
+
+        private async void button28_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if((!string.IsNullOrEmpty(maskedTextBox66.Text)) && (!string.IsNullOrEmpty(maskedTextBox67.Text))&&
+                    (!string.IsNullOrEmpty(maskedTextBox68.Text)) && (!string.IsNullOrEmpty(maskedTextBox69.Text)))
+                {
+
+                    string sql = "DELETE FROM sales_departament WHERE Order_number=" + Convert.ToString(maskedTextBox66.Text) +
+                        " AND purchaser='" + Convert.ToString(maskedTextBox67.Text) + "' AND date_sale='"+
+                        Convert.ToString(maskedTextBox68.Text)+"' AND price_order="+Convert.ToString(maskedTextBox69.Text)+";";
+                    MySqlCommand command = new MySqlCommand(sql, sqlCon);
+                    await command.ExecuteNonQueryAsync();
+                    MessageBox.Show(Convert.ToString("Запись удалена"), Convert.ToString("Delete"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(Convert.ToString("Заполните все поля"), Convert.ToString("DeleteError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+             catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
