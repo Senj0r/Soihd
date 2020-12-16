@@ -106,6 +106,10 @@ namespace soihd
         {
             try
             {
+                radioButton1.Checked = false;
+                radioButton2.Checked = false;
+                radioButton3.Checked = false;
+                radioButton4.Checked = false;
                 dataGridView1.Rows.Clear();
                 string sql = "SELECT phone_brands.name_brand 'Марка',phone_warehouse.name_model 'Модель'," +
                         "phone_warehouse.price_phone 'Цена'" +
@@ -115,6 +119,7 @@ namespace soihd
 
                 if (checkBox1.Checked)
                 {
+                    
                     MySqlDataReader sqlReader = null;
 
                     string tmp = sql + "WHERE phone_warehouse.price_phone>0 AND phone_warehouse.price_phone<10000 ORDER BY phone_warehouse.price_phone;";
